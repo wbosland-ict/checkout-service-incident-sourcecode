@@ -48,4 +48,3 @@ change here, and `checkout-service-incident-files/problem-evidence/` for
 supporting evidence. See `exercise-4-fix-with-ai.md` for the task list,
 including writing your own regression test under
 `tests/ShopFast.Checkout.Tests/`.
-"# checkout-service-incident-sourcecode" 
