@@ -6,7 +6,10 @@ reproduces the bug from `problem-evidence/pr-4821-diff.md`. It exists so
 work against, matching the incident scenario used in Exercises 1–3.
 
 It is **not** a full checkout-service — inventory, payment, and order
-writing are simplified in-process stubs.
+writing are simplified in-process stubs. The payment client implements
+the retry policy from
+`problem-evidence/checkout-service-config.yaml`, but the HTTP transport
+underneath it is stubbed out, so that policy never actually fires here.
 
 This snapshot matches **v2.14.0**, the version running at the time of the
 incident. The code is deliberately left undocumented about what, if
