@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/ShopFast.Checkout/ShopFast.Checkout.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/ShopFast.Checkout.Tests/ShopFast.Checkout.Tests.csproj" />
+  </Folder>
+</Solution>
