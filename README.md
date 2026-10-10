@@ -5,11 +5,21 @@ reproduces the bug from `problem-evidence/pr-4821-diff.md`. It exists so
 **Exercise 4 (Fixing the Source Code with AI)** has real source code to
 work against, matching the incident scenario used in Exercises 1–3.
 
-It is **not** a full checkout-service — inventory, payment, and order
-writing are simplified in-process stubs. The payment client implements
-the retry policy from
-`problem-evidence/checkout-service-config.yaml`, but the HTTP transport
-underneath it is stubbed out, so that policy never actually fires here.
+It is a trimmed-down checkout-service: the checkout domain, its EF Core
+data access, and the clients for its downstream dependencies, without
+the ASP.NET Core host around it.
+
+- `InventoryClient` reserves stock with inventory-service
+  (`POST /api/v2/reservations`).
+- `PaymentClient` charges the customer through payment-gateway
+  (`POST /v1/charge`), with the timeout and retry settings from
+  `problem-evidence/checkout-service-config.yaml`.
+- `OrderWriter` persists the order and its lines through EF Core.
+
+Both HTTP clients are typed `HttpClient`s, configured through
+`InventoryServiceOptions` and `PaymentGatewayOptions`. The tests run
+them against fake downstream services and an in-memory Sqlite
+database, so nothing leaves your machine.
 
 This snapshot matches **v2.14.0**, the version running at the time of the
 incident. The code is deliberately left undocumented about what, if
@@ -21,13 +31,22 @@ repo.
 ## Project layout
 
 ```
-src/ShopFast.Checkout/         Class library: cart/product domain, EF Core
-                                DbContext, CheckoutService, and stub
-                                inventory/payment/order clients.
+src/ShopFast.Checkout/         Class library.
+  Cart/                          Cart/product domain and repository.
+  Inventory/                     Inventory-service client + options.
+  Payment/                       Payment-gateway client + options.
+  Orders/                        Order entities and OrderWriter.
+  DependencyInjection/           AddCheckout(): service registration
+                                  for the host.
+  CheckoutService.cs             Orchestrates a checkout.
+  CheckoutDbContext.cs           EF Core model.
 tests/ShopFast.Checkout.Tests/ xUnit tests.
   Fixtures/                      Sqlite in-memory DbContext factory, a
-                                  query-counting interceptor, and a cart
-                                  builder for realistic item counts.
+                                  query-counting interceptor, a cart
+                                  builder for realistic item counts, and
+                                  fake inventory/payment-gateway HTTP
+                                  handlers (FakeHttpMessageHandler,
+                                  DownstreamFakes).
   CheckoutServiceTests.cs        Smoke test: checkout completes end-to-end.
 ```
 
