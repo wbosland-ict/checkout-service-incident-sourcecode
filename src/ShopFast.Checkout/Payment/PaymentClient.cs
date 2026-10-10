@@ -131,8 +131,8 @@ public class PaymentClient : IPaymentClient
                     ?? throw new PaymentGatewayException(502, "Payment gateway returned an empty charge response.");
 
                 _logger.LogInformation(
-                    "payment.call downstream=payment-gateway status={StatusCode} attempt={Attempt} charge_id={ChargeId} duration_ms={DurationMs}",
-                    status, attempt, body.ChargeId, stopwatch.ElapsedMilliseconds);
+                    "payment.call downstream=payment-gateway status={StatusCode} attempt={Attempt} duration_ms={DurationMs}",
+                    status, attempt, stopwatch.ElapsedMilliseconds);
 
                 return new PaymentResult(body.ChargeId, Money.FromMinorUnits(body.AmountMinor), body.Currency);
             }
@@ -140,8 +140,8 @@ public class PaymentClient : IPaymentClient
             var error = await TryReadErrorAsync(response, timeoutCts.Token);
 
             _logger.LogError(
-                "payment.call downstream=payment-gateway status={StatusCode} attempt={Attempt} duration_ms={DurationMs} msg=\"{Reason}\"",
-                status, attempt, stopwatch.ElapsedMilliseconds, response.ReasonPhrase);
+                "payment.call downstream=payment-gateway status={StatusCode} attempt={Attempt} msg=\"{Reason}\"",
+                status, attempt, attempt < _options.Retry.MaxAttempts ? response.ReasonPhrase : $"{response.ReasonPhrase}, giving up after {attempt} attempts");
 
             if (response.StatusCode == HttpStatusCode.PaymentRequired)
             {

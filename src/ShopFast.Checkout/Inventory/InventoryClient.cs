@@ -63,7 +63,7 @@ public class InventoryClient : IInventoryClient
                     DownstreamJson.Options, timeoutCts.Token)
                     ?? throw new InventoryServiceException(status, "Inventory service returned an empty reservation.");
 
-                _logger.LogInformation(
+                _logger.LogDebug(
                     "inventory.call downstream=inventory-service status={StatusCode} skus={SkuCount} reservation_id={ReservationId} duration_ms={DurationMs}",
                     status, request.Lines.Count, body.ReservationId, stopwatch.ElapsedMilliseconds);
 

@@ -71,7 +71,7 @@ public class OrderWriter : IOrderWriter
         _dbContext.Orders.Add(order);
         await _dbContext.SaveChangesAsync();
 
-        _logger.LogInformation(
+        _logger.LogDebug(
             "order.created order_number={OrderNumber} cart_id={CartId} lines={LineCount} total={Total} currency={Currency}",
             order.OrderNumber, cartId, order.Lines.Count, order.TotalAmount, order.Currency);
 
