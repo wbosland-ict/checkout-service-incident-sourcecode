@@ -1,13 +1,13 @@
 # checkout-service (sample source) — v2.14.0, post-PR #4821
 
-This is a small, runnable **ASP.NET Core / EF Core, C#** sample that
+This is a small, runnable **.NET 9 / EF Core, C#** sample that
 reproduces the bug from `problem-evidence/pr-4821-diff.md`. It exists so
 **Exercise 4 (Fixing the Source Code with AI)** has real source code to
 work against, matching the incident scenario used in Exercises 1–3.
 
 It is a trimmed-down checkout-service: the checkout domain, its EF Core
 data access, and the clients for its downstream dependencies, without
-the ASP.NET Core host around it.
+the ASP.NET Core host (which the real service has) around it.
 
 - `InventoryClient` reserves stock with inventory-service
   (`POST /api/v2/reservations`).
